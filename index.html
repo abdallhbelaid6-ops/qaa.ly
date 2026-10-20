@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منظومة الأستاذ الجامعي - كلية العلوم والتقنية الزاوية الشاطئ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #f1f5f9; }
+        @media print {
+            .no-print { display: none !important; }
+            body { background-color: #fff; color: #000; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-row">
+
+    <!-- Sidebar (الشريط الجانبي الأزرق الداكن المطابق للصورة) -->
+    <aside class="w-72 bg-[#0B2240] text-white flex flex-col justify-between shrink-0 no-print min-h-screen sticky top-0">
+        <div>
+            <!-- Logo & College Name -->
+            <div class="p-6 text-center border-b border-indigo-900/50">
+                <div class="w-16 h-16 mx-auto bg-white/10 rounded-full flex items-center justify-center mb-3 border border-indigo-400/30">
+                    <i class="fa-solid fa-graduation-cap text-3xl text-amber-400"></i>
+                </div>
+                <h2 class="font-bold text-base">كلية العلوم والتقنية</h2>
+                <p class="text-xs text-indigo-300 mt-0.5">الزاوية الشاطئ</p>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-4 space-y-1 text-sm font-medium">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center px-4 py-3 rounded-xl bg-blue-600 text-white transition shadow-sm text-right">
+                    <i class="fa-solid fa-house w-6 text-lg"></i> الرئيسية
+                </button>
+                <button onclick="switchTab('subjects')" id="nav-subjects" class="w-full flex items-center px-4 py-3 rounded-xl hover:bg-white/10 text-indigo-200 transition text-right">
+                    <i class="fa-solid fa-book-open w-6 text-lg"></i> المقررات والمحاضرات
+                </button>
+                <button onclick="switchTab('calendar')" id="nav-calendar" class="w-full flex items-center px-4 py-3 rounded-xl hover:bg-white/10 text-indigo-200 transition text-right">
+                    <i class="fa-solid fa-calendar-days w-6 text-lg"></i> تقويم جدول المحاضرات
+                </button>
+                <button onclick="switchTab('students')" id="nav-students" class="w-full flex items-center px-4 py-3 rounded-xl hover:bg-white/10 text-indigo-200 transition text-right">
+                    <i class="fa-solid fa-users w-6 text-lg"></i> إدارة الطلبة والحضور
+                </button>
+                <button onclick="switchTab('grades')" id="nav-grades" class="w-full flex items-center px-4 py-3 rounded-xl hover:bg-white/10 text-indigo-200 transition text-right">
+                    <i class="fa-solid fa-calculator w-6 text-lg"></i> أعمال السنة والدرجات
+                </button>
+                <button onclick="switchTab('reports')" id="nav-reports" class="w-full flex items-center px-4 py-3 rounded-xl hover:bg-white/10 text-indigo-200 transition text-right">
+                    <i class="fa-solid fa-chart-pie w-6 text-lg text-amber-400"></i> النتائج والتقارير
+                </button>
+            </nav>
+        </div>
+
+        <div class="p-4 border-t border-indigo-900/50 text-center text-xs text-indigo-300">
+            2026 © كلية العلوم والتقنية - الزاوية الشاطئ
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-grow flex flex-col min-w-0">
+
+        <!-- Top Header Bar -->
+        <header class="bg-white shadow-sm h-20 px-8 flex justify-between items-center no-print sticky top-0 z-40">
+            <div class="relative w-96">
+                <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" id="globalSearchInput" placeholder="ابحث عن مقرر، طالب، أو أي شيء..." oninput="globalSearch(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pr-10 pl-4 text-xs focus:outline-none focus:border-blue-600 transition">
+            </div>
+
+            <div class="flex items-center space-x-6 space-x-reverse">
+                <div class="text-left hidden sm:block">
+                    <div class="text-xs text-slate-400">الاثنين 12 أكتوبر 2026</div>
+                    <div class="text-xs font-semibold text-slate-600">11:30 ص</div>
+                </div>
+                <div class="flex items-center space-x-3 space-x-reverse border-r pr-6 border-slate-200">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold">
+                        أع
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-800">أ. عبدالله أمحمد بلعيد لسود</div>
+                        <div class="text-[10px] text-slate-500">عضو هيئة التدريس - قسم المحاسبة</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body Area -->
+        <main class="p-8 space-y-6 flex-grow">
+
+            <!-- TAB 1: DASHBOARD (الرئيسية) -->
+            <section id="tab-dashboard" class="space-y-6">
+                <div class="bg-gradient-to-l from-blue-900 to-blue-700 text-white rounded-2xl p-6 shadow-sm flex justify-between items-center relative overflow-hidden">
+                    <div class="space-y-2 z-10">
+                        <span class="text-xs bg-amber-400 text-blue-950 font-bold px-3 py-1 rounded-full">كلية العلوم والتقنية - الزاوية الشاطئ</span>
+                        <h2 class="text-2xl font-extrabold mt-1">مرحباً أ. عبدالله أمحمد بلعيد لسود</h2>
+                        <p class="text-xs text-blue-100">" بالعلم تبنى.. المستقبل "</p>
+                    </div>
+                    <div class="hidden md:block z-10 text-left">
+                        <div class="text-sm font-bold text-amber-300">معاً نحو تعلم نوعي وبحث علمي متميز</div>
+                    </div>
+                </div>
+
+                <!-- 5 KPI Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center space-y-2">
+                        <div class="w-10 h-10 mx-auto bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
+                        <div class="text-xs text-slate-500 font-semibold">إجمالي الطلبة المسجلين</div>
+                        <div class="text-2xl font-black text-slate-800" id="statStudentsCount">0</div>
+                        <button onclick="switchTab('students')" class="text-xs text-blue-600 font-bold hover:underline">عرض الطلبة ←</button>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center space-y-2">
+                        <div class="w-10 h-10 mx-auto bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-book"></i></div>
+                        <div class="text-xs text-slate-500 font-semibold">المقررات التي تدرسها</div>
+                        <div class="text-2xl font-black text-slate-800" id="statSubjectsCount">0</div>
+                        <button onclick="switchTab('subjects')" class="text-xs text-blue-600 font-bold hover:underline">عرض المقررات ←</button>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center space-y-2">
+                        <div class="w-10 h-10 mx-auto bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-calendar-day"></i></div>
+                        <div class="text-xs text-slate-500 font-semibold">محاضرات التقويم</div>
+                        <div class="text-2xl font-black text-slate-800" id="statScheduleCount">0</div>
+                        <button onclick="switchTab('calendar')" class="text-xs text-blue-600 font-bold hover:underline">عرض التقويم ←</button>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center space-y-2">
+                        <div class="w-10 h-10 mx-auto bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-file-lines"></i></div>
+                        <div class="text-xs text-slate-500 font-semibold">أعمال السنة والدرجات</div>
+                        <div class="text-2xl font-black text-slate-800">مفعل</div>
+                        <button onclick="switchTab('grades')" class="text-xs text-blue-600 font-bold hover:underline">عرض التفاصيل ←</button>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center space-y-2">
+                        <div class="w-10 h-10 mx-auto bg-cyan-50 text-cyan-600 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-chart-pie"></i></div>
+                        <div class="text-xs text-slate-500 font-semibold">التقارير والمؤشرات</div>
+                        <div class="text-2xl font-black text-slate-800">نشط</div>
+                        <button onclick="switchTab('reports')" class="text-xs text-blue-600 font-bold hover:underline">عرض التقارير ←</button>
+                    </div>
+                </div>
+
+                <!-- Dashboard Subjects Table -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+                    <div class="flex justify-between items-center border-b pb-3">
+                        <h3 class="font-bold text-slate-800 flex items-center"><i class="fa-solid fa-book-bookmark text-blue-600 me-2"></i> مقرراتي الدراسية</h3>
+                        <button onclick="openAddSubjectModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold">+ إضافة مقرر</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse text-xs">
+                            <thead class="bg-slate-50 text-slate-600">
+                                <tr>
+                                    <th class="p-3">#</th>
+                                    <th class="p-3">اسم المقرر</th>
+                                    <th class="p-3">الرمز</th>
+                                    <th class="p-3">الشعبة</th>
+                                    <th class="p-3 text-center">المحاضرات المرفوعة</th>
+                                    <th class="p-3 text-center">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboardSubjectsTable" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: SUBJECTS & LECTURE UPLOADS -->
+            <section id="tab-subjects" class="space-y-6 hidden">
+                <div class="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">المقررات الدراسية ورفع المحاضرات</h2>
+                        <p class="text-xs text-slate-500">رفع وإدارة الملفات التعليمية لكل مقرر على حدة.</p>
+                    </div>
+                    <button onclick="openAddSubjectModal()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold">إضافة مقرر جديد</button>
+                </div>
+                <div id="subjectsFullGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+            </section>
+
+            <!-- TAB 3: CALENDAR (تقويم المحاضرات) -->
+            <section id="tab-calendar" class="space-y-6 hidden">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">تقويم جدول المحاضرات الأسبوعي</h2>
+                        <p class="text-xs text-slate-500">مواعيد القاعات والمحاضرات منظمة حسب الأيام.</p>
+                    </div>
+                    <button onclick="openAddScheduleModal()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold">+ إضافة محاضرة للتقويم</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-6 gap-4 text-xs">
+                    <div class="bg-white rounded-2xl shadow-sm border p-4"><div class="font-bold border-b pb-2 text-center bg-slate-50 -mx-4 -mt-4 p-3 rounded-t-2xl">السبت</div><div id="day-السبت" class="space-y-2 mt-2"></div></div>
+                    <div class="bg-white rounded-2xl shadow-sm border p-4"><div class="font-bold border-b pb-2 text-center bg-slate-50 -mx-4 -mt-4 p-3 rounded-t-2xl">الأحد</div><div id="day-الأحد" class="space-y-2 mt-2"></div></div>
+                    <div class="bg-white rounded-2xl shadow-sm border p-4"><div class="font-bold border-b pb-2 text-center bg-slate-50 -mx-4 -mt-4 p-3 rounded-t-2xl">الاثنين</div><div id="day-الاثنين" class="space-y-2 mt-2"></div></div>
+                    <div class="bg-white rounded-2xl shadow-sm border p-4"><div class="font-bold border-b pb-2 text-center bg-slate-50 -mx-4 -mt-4 p-3 rounded-t-2xl">الثلاثاء</div><div id="day-الثلاثاء" class="space-y-2 mt-2"></div></div>
+                    <div class="bg-white rounded-2xl shadow-sm border p-4"><div class="font-bold border-b pb-2 text-center bg-slate-50 -mx-4 -mt-4 p-3 rounded-t-2xl">الأربعاء</div><div id="day-الأربعاء" class="space-y-2 mt-2"></div></div>
+                    <div class="bg-white rounded-2xl shadow-sm border p-4"><div class="font-bold border-b pb-2 text-center bg-slate-50 -mx-4 -mt-4 p-3 rounded-t-2xl">الخميس</div><div id="day-الخميس" class="space-y-2 mt-2"></div></div>
+                </div>
+            </section>
+
+            <!-- TAB 4: STUDENTS & ATTENDANCE -->
+            <section id="tab-students" class="space-y-6 hidden">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-center flex-wrap gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">إدارة الطلبة والحضور</h2>
+                        <p class="text-xs text-slate-500">اختر المقرر لتسجيل الحضور والغياب السريع.</p>
+                    </div>
+                    <div class="flex items-center space-x-2 space-x-reverse">
+                        <select id="studentsSubjectSelect" onchange="renderStudentsTable()" class="border rounded-xl px-3 py-2 text-xs font-bold bg-slate-50"></select>
+                        <button onclick="openAddStudentModal()" class="bg-blue-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold">+ طالب جديد</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <table class="w-full text-right border-collapse text-xs">
+                        <thead class="bg-slate-50 text-slate-600">
+                            <tr>
+                                <th class="p-4">رقم القيد</th>
+                                <th class="p-4">اسم الطالب</th>
+                                <th class="p-4 text-center">حالة الحضور (انقر للتبديل)</th>
+                                <th class="p-4 text-center">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- TAB 5: GRADES -->
+            <section id="tab-grades" class="space-y-6 hidden">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">رصد أعمال السنة والدرجات</h2>
+                        <p class="text-xs text-slate-500">النصفي، النشاط، وورقة العمل.</p>
+                    </div>
+                    <div class="flex items-center space-x-2 space-x-reverse">
+                        <select id="gradesSubjectSelect" onchange="renderGradesTable()" class="border rounded-xl px-3 py-2 text-xs font-bold bg-slate-50"></select>
+                        <button onclick="window.print()" class="bg-slate-800 text-white px-3.5 py-2 rounded-xl text-xs font-bold">طباعة الكشف</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
+                    <table class="w-full text-right border-collapse text-xs min-w-[700px]">
+                        <thead class="bg-slate-50 text-slate-600">
+                            <tr>
+                                <th class="p-4">اسم الطالب</th>
+                                <th class="p-4 w-36">الامتحان النصفي (20)</th>
+                                <th class="p-4 w-36">النشاط والمشاركة (15)</th>
+                                <th class="p-4 w-36">ورقة العمل (15)</th>
+                                <th class="p-4 w-32 text-center">المجموع (50)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gradesTableBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- TAB 6: REPORTS & CHARTS -->
+            <section id="tab-reports" class="space-y-6 hidden">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-center flex-wrap gap-4 no-print">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">النتائج والتقارير الأكاديمية والمؤشرات</h2>
+                        <p class="text-xs text-slate-500">بحث بالاسم أو برقم القيد وعرض التحليلات.</p>
+                    </div>
+                    <div class="flex items-center space-x-2 space-x-reverse">
+                        <input type="text" id="reportSearchInput" placeholder="بحث بالاسم أو القيد..." oninput="filterReportStudent()" class="border rounded-xl px-3 py-2 text-xs w-64">
+                        <select id="reportStudentSelect" onchange="renderStudentReport()" class="border rounded-xl px-3 py-2 text-xs"></select>
+                        <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold">طباعة التقرير</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 no-print">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border h-64 flex justify-center"><canvas id="attChart"></canvas></div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border h-64 flex justify-center"><canvas id="gradesChart"></canvas></div>
+                </div>
+
+                <div id="studentReportCard"></div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="addSubjectModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <h3 class="text-base font-bold text-slate-800 border-b pb-2">إضافة مقرر جديد</h3>
+            <div class="space-y-3 text-xs">
+                <div><label class="block font-semibold mb-1">اسم المقرر</label><input type="text" id="newSubName" class="w-full border rounded-xl p-2"></div>
+                <div><label class="block font-semibold mb-1">رمز المقرر</label><input type="text" id="newSubCode" class="w-full border rounded-xl p-2" placeholder="ACC130"></div>
+                <div><label class="block font-semibold mb-1">الشعبة</label><input type="text" id="newSubGroup" class="w-full border rounded-xl p-2" placeholder="الشعبة الأولى"></div>
+            </div>
+            <div class="flex justify-end space-x-2 space-x-reverse pt-2">
+                <button onclick="closeModal('addSubjectModal')" class="px-4 py-2 text-xs text-slate-600">إلغاء</button>
+                <button onclick="saveSubject()" class="px-4 py-2 text-xs bg-blue-600 text-white rounded-xl font-bold">حفظ المقرر</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="addStudentModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <h3 class="text-base font-bold text-slate-800 border-b pb-2">إضافة طالب جديد</h3>
+            <div class="space-y-3 text-xs">
+                <div><label class="block font-semibold mb-1">رقم القيد</label><input type="text" id="newStudentId" class="w-full border rounded-xl p-2"></div>
+                <div><label class="block font-semibold mb-1">اسم الطالب رباعي</label><input type="text" id="newStudentName" class="w-full border rounded-xl p-2"></div>
+            </div>
+            <div class="flex justify-end space-x-2 space-x-reverse pt-2">
+                <button onclick="closeModal('addStudentModal')" class="px-4 py-2 text-xs text-slate-600">إلغاء</button>
+                <button onclick="saveStudent()" class="px-4 py-2 text-xs bg-blue-600 text-white rounded-xl font-bold">حفظ الطالب</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="addScheduleModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <h3 class="text-base font-bold text-slate-800 border-b pb-2">إضافة محاضرة للتقويم</h3>
+            <div class="space-y-3 text-xs">
+                <div><label class="block font-semibold mb-1">المقرر</label><select id="schedSubSelect" class="w-full border rounded-xl p-2"></select></div>
+                <div>
+                    <label class="block font-semibold mb-1">اليوم</label>
+                    <select id="schedDaySelect" class="w-full border rounded-xl p-2">
+                        <option value="السبت">السبت</option>
+                        <option value="الأحد">الأحد</option>
+                        <option value="الاثنين">الاثنين</option>
+                        <option value="الثلاثاء">الثلاثاء</option>
+                        <option value="الأربعاء">الأربعاء</option>
+                        <option value="الخميس">الخميس</option>
+                    </select>
+                </div>
+                <div><label class="block font-semibold mb-1">الوقت</label><input type="text" id="schedTime" placeholder="09:00 ص - 10:30 ص" class="w-full border rounded-xl p-2"></div>
+                <div><label class="block font-semibold mb-1">القاعة</label><input type="text" id="schedHall" placeholder="قاعة 2" class="w-full border rounded-xl p-2"></div>
+            </div>
+            <div class="flex justify-end space-x-2 space-x-reverse pt-2">
+                <button onclick="closeModal('addScheduleModal')" class="px-4 py-2 text-xs text-slate-600">إلغاء</button>
+                <button onclick="saveSchedule()" class="px-4 py-2 text-xs bg-blue-600 text-white rounded-xl font-bold">حفظ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic Script -->
+    <script>
+        let state = JSON.parse(localStorage.getItem('academic_azawia_complete_v2')) || {
+            subjects: [
+                { id: 'sub1', name: 'محاسبة شركات الأموال', code: 'ACC130', group: 'الشعبة الأولى', files: [{name: 'معايير_الشركات.pdf', url: '#'}] },
+                { id: 'sub2', name: 'المحاسبة الإدارية', code: 'ACC131', group: 'الشعبة الثانية', files: [] },
+                { id: 'sub3', name: 'الاقتصاد الجزئي', code: 'ECO140', group: 'الشعبة الأولى', files: [] }
+            ],
+            schedule: [
+                { id: 'sc1', subjectId: 'sub1', day: 'السبت', time: '09:00 ص - 10:30 ص', hall: 'قاعة 2' },
+                { id: 'sc2', subjectId: 'sub2', day: 'الأحد', time: '11:30 ص - 12:30 م', hall: 'قاعة 1' }
+            ],
+            students: [
+                { id: '2201001', name: 'عبدالله محمد بلعيد', subjectId: 'sub1', midterm: 18, activity: 14, worksheet: 13, attStatus: 'present', notes: 'طالب ممتاز ومتميز' },
+                { id: '2201002', name: 'سالم علي الحصائري', subjectId: 'sub1', midterm: 15, activity: 11, worksheet: 12, attStatus: 'absent', notes: 'يحتاج للمتابعة' }
+            ]
+        };
+
+        function saveData() { localStorage.setItem('academic_azawia_complete_v2', JSON.stringify(state)); }
+
+        let attChartInst = null;
+        let gradesChartInst = null;
+
+        function switchTab(tabId) {
+            const tabs = ['dashboard', 'subjects', 'calendar', 'students', 'grades', 'reports'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                if(el) el.classList.add('hidden');
+                const nav = document.getElementById(`nav-${t}`);
+                if(nav) nav.classList.remove('bg-blue-600', 'text-white');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if(activeNav) activeNav.classList.add('bg-blue-600', 'text-white');
+
+            if(tabId === 'dashboard') renderDashboard();
+            if(tabId === 'subjects') renderSubjectsGrid();
+            if(tabId === 'calendar') renderCalendarView();
+            if(tabId === 'students') populateStudentsSelect();
+            if(tabId === 'grades') populateGradesSelect();
+            if(tabId === 'reports') initReportsTab();
+        }
+
+        function renderDashboard() {
+            const tbody = document.getElementById('dashboardSubjectsTable');
+            tbody.innerHTML = state.subjects.map((sub, idx) => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-bold">${idx + 1}</td>
+                    <td class="p-3 font-semibold text-slate-800">${sub.name}</td>
+                    <td class="p-3 font-mono text-blue-600">${sub.code}</td>
+                    <td class="p-3">${sub.group}</td>
+                    <td class="p-3 text-center"><span class="bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded text-xs">${sub.files.length} ملفات</span></td>
+                    <td class="p-3 text-center space-x-2 space-x-reverse">
+                        <button onclick="switchTab('subjects')" class="text-blue-600 font-bold hover:underline">المحاضرات</button>
+                        <button onclick="deleteSubject('${sub.id}')" class="text-red-500 font-bold hover:underline">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('statStudentsCount').innerText = state.students.length;
+            document.getElementById('statSubjectsCount').innerText = state.subjects.length;
+            document.getElementById('statScheduleCount').innerText = state.schedule.length;
+        }
+
+        function renderSubjectsGrid() {
+            const container = document.getElementById('subjectsFullGrid');
+            container.innerHTML = state.subjects.map(sub => `
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <div class="flex justify-between border-b pb-2">
+                        <div>
+                            <h3 class="font-bold text-base text-slate-800">${sub.name}</h3>
+                            <span class="text-xs text-slate-500">${sub.group} | رمزه: ${sub.code}</span>
+                        </div>
+                        <button onclick="deleteSubject('${sub.id}')" class="text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-bold">المحاضرات الخاصة بالمقرر:</span>
+                            <label class="bg-blue-600 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer">
+                                + رفع ملف (PDF/DOC)
+                                <input type="file" accept=".pdf,.doc,.docx" class="hidden" onchange="uploadLecture(event, '${sub.id}')">
+                            </label>
+                        </div>
+                        <ul class="space-y-1 text-xs">
+                            ${sub.files.map((f, i) => `
+                                <li class="flex justify-between items-center p-1.5 bg-white border rounded">
+                                    <span class="truncate max-w-[180px]">${f.name}</span>
+                                    <div class="space-x-1 space-x-reverse">
+                                        <a href="${f.url}" target="_blank" class="text-blue-600 font-bold text-[10px] hover:underline">فتح</a>
+                                        <button onclick="deleteLecture('${sub.id}',${i})" class="text-red-500 text-[10px]">حذف</button>
+                                    </div>
+                                </li>
+                            `).join('') || '<p class="text-[10px] text-slate-400">لا توجد محاضرات مرفوعة</p>'}
+                        </ul>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function uploadLecture(event, subId) {
+            const file = event.target.files[0];
+            if(file) {
+                const sub = state.subjects.find(s => s.id === subId);
+                if(sub) {
+                    sub.files.push({ name: file.name, url: URL.createObjectURL(file) });
+                    saveData();
+                    renderSubjectsGrid();
+                }
+            }
+        }
+
+        function deleteLecture(subId, idx) {
+            const sub = state.subjects.find(s => s.id === subId);
+            if(sub) {
+                sub.files.splice(idx, 1);
+                saveData();
+                renderSubjectsGrid();
+            }
+        }
+
+        function renderCalendarView() {
+            ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'].forEach(day => {
+                const container = document.getElementById(`day-${day}`);
+                const items = state.schedule.filter(s => s.day === day);
+                container.innerHTML = items.map(item => {
+                    const sub = state.subjects.find(s => s.id === item.subjectId);
+                    return `
+                        <div class="p-2.5 bg-blue-50 border border-blue-100 rounded-xl space-y-1">
+                            <div class="font-bold text-blue-900">${sub ? sub.name : ''}</div>
+                            <div class="text-[10px] text-blue-700"><i class="fa-regular fa-clock me-1"></i>${item.time}</div>
+                            <div class="text-[10px] text-slate-500"><i class="fa-solid fa-location-dot me-1"></i>${item.hall}</div>
+                        </div>
+                    `;
+                }).join('') || '<p class="text-[10px] text-slate-300 text-center py-4">لا توجد محاضرات</p>';
+            });
+        }
+
+        function populateStudentsSelect() {
+            const select = document.getElementById('studentsSubjectSelect');
+            select.innerHTML = state.subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            renderStudentsTable();
+        }
+
+        function renderStudentsTable() {
+            const subId = document.getElementById('studentsSubjectSelect').value;
+            const students = state.students.filter(s => s.subjectId === subId);
+            const tbody = document.getElementById('studentsTableBody');
+
+            tbody.innerHTML = students.map(st => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-4 font-bold font-mono">${st.id}</td>
+                    <td class="p-4 font-semibold text-slate-800">${st.name}</td>
+                    <td class="p-4 text-center">
+                        <button onclick="toggleAttendance('${st.id}')" class="px-4 py-1.5 rounded-lg font-bold text-xs ${st.attStatus === 'present' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}">
+                            ${st.attStatus === 'present' ? 'حاضر' : 'غائب'}
+                        </button>
+                    </td>
+                    <td class="p-4 text-center">
+                        <button onclick="deleteStudent('${st.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="4" class="p-4 text-center text-slate-400">لا توجد سجلات طلبة لهذا المقرر</td></tr>';
+        }
+
+        function toggleAttendance(studentId) {
+            const st = state.students.find(s => s.id === studentId);
+            if(st) {
+                st.attStatus = st.attStatus === 'present' ? 'absent' : 'present';
+                saveData();
+                renderStudentsTable();
+            }
+        }
+
+        function populateGradesSelect() {
+            const select = document.getElementById('gradesSubjectSelect');
+            select.innerHTML = state.subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            renderGradesTable();
+        }
+
+        function renderGradesTable() {
+            const subId = document.getElementById('gradesSubjectSelect').value;
+            const students = state.students.filter(s => s.subjectId === subId);
+            const tbody = document.getElementById('gradesTableBody');
+
+            tbody.innerHTML = students.map(st => {
+                const total = (st.midterm || 0) + (st.activity || 0) + (st.worksheet || 0);
+                return `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-4 font-semibold">${st.name}</td>
+                        <td class="p-4"><input type="number" value="${st.midterm || 0}" onchange="updateGrade('${st.id}', 'midterm', this.value)" class="w-16 border rounded p-1 text-center font-bold"></td>
+                        <td class="p-4"><input type="number" value="${st.activity || 0}" onchange="updateGrade('${st.id}', 'activity', this.value)" class="w-16 border rounded p-1 text-center font-bold"></td>
+                        <td class="p-4"><input type="number" value="${st.worksheet || 0}" onchange="updateGrade('${st.id}', 'worksheet', this.value)" class="w-16 border rounded p-1 text-center font-bold"></td>
+                        <td class="p-4 text-center font-black text-blue-700">${total} / 50</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateGrade(id, field, val) {
+            const st = state.students.find(s => s.id === id);
+            if(st) { st[field] = parseFloat(val) || 0; saveData(); renderGradesTable(); }
+        }
+
+        function initReportsTab() {
+            const select = document.getElementById('reportStudentSelect');
+            select.innerHTML = state.students.map(s => `<option value="${s.id}">${s.name} (${s.id})</option>`).join('');
+            renderStudentReport();
+            renderCharts();
+        }
+
+        function filterReportStudent() {
+            const query = document.getElementById('reportSearchInput').value.toLowerCase();
+            const students = state.students.filter(s => s.name.toLowerCase().includes(query) || s.id.includes(query));
+            const select = document.getElementById('reportStudentSelect');
+            select.innerHTML = students.map(s => `<option value="${s.id}">${s.name} (${s.id})</option>`).join('');
+            if(students.length > 0) renderStudentReport();
+        }
+
+        function renderStudentReport() {
+            const id = document.getElementById('reportStudentSelect').value;
+            const st = state.students.find(s => s.id === id);
+            if(!st) return;
+            const tot = (st.midterm || 0) + (st.activity || 0) + (st.worksheet || 0);
+
+            document.getElementById('studentReportCard').innerHTML = `
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex justify-between items-center border-b pb-3">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">${st.name}</h3>
+                            <p class="text-xs text-slate-500">رقم القيد: ${st.id} | الحالة: ${st.attStatus === 'present' ? 'حاضر منتظم' : 'متابع'}</p>
+                        </div>
+                        <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full font-bold text-xs">إجمالي أعمال السنة: ${tot} / 50</span>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ملاحظات الأستاذ الأكاديمية</label>
+                        <textarea onchange="updateNotes('${st.id}', this.value)" class="w-full border rounded-xl p-3 text-xs" rows="2">${st.notes || ''}</textarea>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateNotes(id, notes) {
+            const st = state.students.find(s => s.id === id);
+            if(st) { st.notes = notes; saveData(); }
+        }
+
+        function renderCharts() {
+            if(attChartInst) attChartInst.destroy();
+            attChartInst = new Chart(document.getElementById('attChart'), {
+                type: 'doughnut',
+                data: { labels: ['حضور', 'غياب'], datasets: [{ data: [92, 8], backgroundColor: ['#2563eb', '#ef4444'] }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            if(gradesChartInst) gradesChartInst.destroy();
+            gradesChartInst = new Chart(document.getElementById('gradesChart'), {
+                type: 'bar',
+                data: { labels: ['ممتاز', 'جيد جداً', 'جيد', 'مقبول'], datasets: [{ label: 'توزيع الدرجات', data: [12, 18, 8, 3], backgroundColor: '#3b82f6' }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function globalSearch(query) {
+            if(!query) return;
+            switchTab('students');
+            document.getElementById('reportSearchInput').value = query;
+            filterReportStudent();
+        }
+
+        function openAddSubjectModal() { document.getElementById('addSubjectModal').classList.remove('hidden'); document.getElementById('addSubjectModal').classList.add('flex'); }
+        function openAddStudentModal() { document.getElementById('addStudentModal').classList.remove('hidden'); document.getElementById('addStudentModal').classList.add('flex'); }
+        function openAddScheduleModal() {
+            const select = document.getElementById('schedSubSelect');
+            select.innerHTML = state.subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            document.getElementById('addScheduleModal').classList.remove('hidden');
+            document.getElementById('addScheduleModal').classList.add('flex');
+        }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
+
+        function saveSubject() {
+            const name = document.getElementById('newSubName').value;
+            const code = document.getElementById('newSubCode').value;
+            const group = document.getElementById('newSubGroup').value;
+            if(name) {
+                state.subjects.push({ id: 'sub_' + Date.now(), name, code, group, files: [] });
+                saveData();
+                closeModal('addSubjectModal');
+                renderDashboard();
+            }
+        }
+
+        function saveStudent() {
+            const id = document.getElementById('newStudentId').value;
+            const name = document.getElementById('newStudentName').value;
+            const subId = document.getElementById('studentsSubjectSelect').value || state.subjects[0].id;
+            if(id && name) {
+                state.students.push({ id, name, subjectId: subId, midterm: 0, activity: 0, worksheet: 0, attStatus: 'present', notes: '' });
+                saveData();
+                closeModal('addStudentModal');
+                renderStudentsTable();
+            }
+        }
+
+        function saveSchedule() {
+            const subjectId = document.getElementById('schedSubSelect').value;
+            const day = document.getElementById('schedDaySelect').value;
+            const time = document.getElementById('schedTime').value;
+            const hall = document.getElementById('schedHall').value;
+            if(time) {
+                state.schedule.push({ id: 'sc_' + Date.now(), subjectId, day, time, hall });
+                saveData();
+                closeModal('addScheduleModal');
+                renderCalendarView();
+            }
+        }
+
+        function deleteSubject(id) {
+            state.subjects = state.subjects.filter(s => s.id !== id);
+            saveData();
+            renderDashboard();
+            renderSubjectsGrid();
+        }
+
+        function deleteStudent(id) {
+            state.students = state.students.filter(s => s.id !== id);
+            saveData();
+            renderStudentsTable();
+        }
+
+        window.onload = function() {
+            renderDashboard();
+        };
+    </script>
+</body>
+</html>
